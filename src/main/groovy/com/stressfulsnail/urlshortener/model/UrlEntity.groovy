@@ -4,6 +4,8 @@ import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.Inheritance
 import javax.persistence.InheritanceType
@@ -14,13 +16,13 @@ import javax.persistence.Table
 @Table(name = 'url')
 @Inheritance(strategy = InheritanceType.JOINED)
 class UrlEntity {
-    @Id
-    @Column
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = 'url_id')
     Long id
 
-    @Column(unique = true, nullable = false)
+    @Column(name = 'url_key', unique = true, nullable = false)
     String key
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = 'url')
     Set<RequestEntity> requests = []
 }
