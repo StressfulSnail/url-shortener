@@ -1,0 +1,9 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/url_shortener
+    username: root
+    password: toor
