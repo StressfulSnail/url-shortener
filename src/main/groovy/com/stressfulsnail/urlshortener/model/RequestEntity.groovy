@@ -1,4 +1,4 @@
-package com.stressfulsnail.urlshortener.modal
+package com.stressfulsnail.urlshortener.model
 
 import javax.persistence.Column
 import javax.persistence.Entity
