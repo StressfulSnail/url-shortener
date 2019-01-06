@@ -1,8 +1,10 @@
 package com.stressfulsnail.urlshortener.repository
 
 import com.stressfulsnail.urlshortener.model.RedirectEntity
-import org.springframework.data.repository.CrudRepository
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Repository
 
-interface RedirectRepository extends CrudRepository<RedirectEntity, Long> {
+@Repository
+interface RedirectRepository extends JpaRepository<RedirectEntity, Long> {
     RedirectEntity findByKey(String key)
 }
