@@ -35,4 +35,23 @@ class RedirectServiceTests {
         assertThat(redirect.redirectUrl).isEqualTo('website.com')
     }
 
+    @Test
+    void getsInvalidRedirect() {
+        given(redirectRepositoryMock.findByKey('BAD_KEY')).willReturn(null)
+
+        RedirectDTO redirect = redirectService.getRedirect('BAD_KEY')
+
+        assertThat(redirect).isNull()
+    }
+
+    @Test
+    void createsRedirect() {
+        def redirectUrl = 'website.com'
+        RedirectDTO redirectDTO = redirectService.createRedirect(redirectUrl)
+
+        assertThat(redirectDTO.id).isNull()
+        assertThat(redirectDTO.redirectUrl).isEqualTo(redirectUrl)
+        assertThat(redirectDTO.key).matches(/^temp[0-9]{4}$/)
+    }
+
 }

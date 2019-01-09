@@ -7,6 +7,6 @@ import javax.persistence.Table
 @Entity
 @Table(name = 'redirect')
 class RedirectEntity extends UrlEntity {
-    @Column(name = 'redirect_url')
+    @Column(name = 'redirect_url', length = 2083)
     String redirectUrl
 }
