@@ -49,9 +49,30 @@ class RedirectServiceTests {
         def redirectUrl = 'website.com'
         RedirectDTO redirectDTO = redirectService.createRedirect(redirectUrl)
 
+        verify(redirectRepositoryMock).save(any())
         assertThat(redirectDTO.id).isNull()
         assertThat(redirectDTO.redirectUrl).isEqualTo(redirectUrl)
         assertThat(redirectDTO.key).matches(/^temp[0-9]{4}$/)
+    }
+
+    @Test
+    void deletesValidRedirect() {
+        def foundRedirect = new RedirectEntity()
+        when(redirectRepositoryMock.findByKey('KEY')).thenReturn(foundRedirect)
+
+        def success = redirectService.deleteRedirect('KEY')
+
+        assertThat(success).isTrue()
+        verify(redirectRepositoryMock).delete(foundRedirect)
+    }
+
+    @Test
+    void deletesInvalidRedirect() {
+        when(redirectRepositoryMock.findByKey('BAD_KEY')).thenReturn(null)
+
+        def success = redirectService.deleteRedirect('BAD_KEY')
+
+        assertThat(success).isFalse()
     }
 
 }

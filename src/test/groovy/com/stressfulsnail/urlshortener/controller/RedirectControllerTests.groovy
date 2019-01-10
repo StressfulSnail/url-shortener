@@ -68,4 +68,20 @@ class RedirectControllerTests {
         )
             .andExpect(status().isBadRequest())
     }
+
+    @Test
+    void deleteValidRedirect() {
+        when(redirectServiceMock.deleteRedirect('KEY')).thenReturn(true)
+
+        mockMvc.perform(delete('/api/redirect/KEY'))
+            .andExpect(status().is2xxSuccessful())
+    }
+
+    @Test
+    void deleteInvalidRedirect() {
+        when(redirectServiceMock.deleteRedirect('BAD_KEY')).thenReturn(false)
+
+        mockMvc.perform(delete('/api/redirect/BAD_KEY'))
+            .andExpect(status().isNotFound())
+    }
 }

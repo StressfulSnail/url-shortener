@@ -40,4 +40,13 @@ class RedirectService {
 
         return poToDto(redirectEntity)
     }
+
+    boolean deleteRedirect(String urlKey) {
+        RedirectEntity redirectEntity = redirectRepository.findByKey(urlKey)
+        if (!redirectEntity) {
+            return false
+        }
+        redirectRepository.delete(redirectEntity)
+        return true
+    }
 }

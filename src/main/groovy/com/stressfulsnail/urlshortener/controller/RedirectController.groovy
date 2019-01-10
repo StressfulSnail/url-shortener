@@ -3,7 +3,9 @@ package com.stressfulsnail.urlshortener.controller
 import com.stressfulsnail.urlshortener.dto.RedirectDTO
 import com.stressfulsnail.urlshortener.service.RedirectService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -30,6 +32,15 @@ class RedirectController {
     @PostMapping
     RedirectDTO createRedirect(@RequestBody @Validated RedirectDTO redirectDTO) {
         return redirectService.createRedirect(redirectDTO.redirectUrl)
+    }
+
+    @DeleteMapping('/{key}')
+    ResponseEntity deleteRedirect(@PathVariable String key) {
+        boolean found = redirectService.deleteRedirect(key)
+        if (!found) {
+            return ResponseEntity.status(404).body(null)
+        }
+        return ResponseEntity.status(204).body(null)
     }
 
 }
