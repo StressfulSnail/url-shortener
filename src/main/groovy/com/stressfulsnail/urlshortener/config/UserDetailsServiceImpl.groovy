@@ -18,7 +18,7 @@ class UserDetailsServiceImpl implements UserDetailsService {
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity user = userRepository.findByUsername(username)
         if (!user) {
-            return null
+            throw new UsernameNotFoundException("${username} not found!")
         }
 
         Set<String> roles = user.roles.collect { it.role }
