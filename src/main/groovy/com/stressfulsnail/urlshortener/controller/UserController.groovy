@@ -3,6 +3,7 @@ package com.stressfulsnail.urlshortener.controller
 import com.stressfulsnail.urlshortener.dto.UserDTO
 import com.stressfulsnail.urlshortener.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -25,7 +26,11 @@ class UserController {
 
     @GetMapping('/{userId}')
     UserDTO getUser(@PathVariable Long userId) {
-        return userService.getUser(userId)
+        def user = userService.getUser(userId)
+        if (!user) {
+            throw new NotFoundException()
+        }
+        return user
     }
 
     @PostMapping
@@ -34,7 +39,11 @@ class UserController {
     }
 
     @DeleteMapping('/{userId}')
-    void deleteUser(@PathVariable Long userId) {
-
+    ResponseEntity deleteUser(@PathVariable Long userId) {
+        if (!userService.userExists(userId)) {
+            return ResponseEntity.status(404).body(null)
+        }
+        userService.deleteUser(userId)
+        return ResponseEntity.status(204).body(null)
     }
 }
