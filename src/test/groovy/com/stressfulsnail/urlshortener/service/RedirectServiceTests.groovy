@@ -56,23 +56,31 @@ class RedirectServiceTests {
     }
 
     @Test
-    void deletesValidRedirect() {
+    void findsValidRedirect() {
         def foundRedirect = new RedirectEntity()
         when(redirectRepositoryMock.findByKey('KEY')).thenReturn(foundRedirect)
 
-        def success = redirectService.deleteRedirect('KEY')
+        def success = redirectService.redirectExists('KEY')
 
         assertThat(success).isTrue()
-        verify(redirectRepositoryMock).delete(foundRedirect)
     }
 
     @Test
-    void deletesInvalidRedirect() {
+    void findsInvalidRedirect() {
         when(redirectRepositoryMock.findByKey('BAD_KEY')).thenReturn(null)
 
-        def success = redirectService.deleteRedirect('BAD_KEY')
+        def success = redirectService.redirectExists('BAD_KEY')
 
         assertThat(success).isFalse()
     }
 
+    @Test
+    void deletesRedirect() {
+        def foundRedirect = new RedirectEntity()
+        when(redirectRepositoryMock.findByKey('KEY')).thenReturn(foundRedirect)
+
+        redirectService.deleteRedirect('KEY')
+
+        verify(redirectRepositoryMock).delete(foundRedirect)
+    }
 }

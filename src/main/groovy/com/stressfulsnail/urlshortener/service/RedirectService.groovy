@@ -21,6 +21,10 @@ class RedirectService {
         }
     }
 
+    boolean redirectExists(String urlKey) {
+        return redirectRepository.findByKey(urlKey)
+    }
+
     RedirectDTO getRedirect(String urlKey) {
         RedirectEntity redirectEntity = redirectRepository.findByKey(urlKey)
         if (redirectEntity) {
@@ -41,12 +45,8 @@ class RedirectService {
         return poToDto(redirectEntity)
     }
 
-    boolean deleteRedirect(String urlKey) {
-        RedirectEntity redirectEntity = redirectRepository.findByKey(urlKey)
-        if (!redirectEntity) {
-            return false
-        }
+    void deleteRedirect(String urlKey) {
+        def redirectEntity = redirectRepository.findByKey(urlKey)
         redirectRepository.delete(redirectEntity)
-        return true
     }
 }

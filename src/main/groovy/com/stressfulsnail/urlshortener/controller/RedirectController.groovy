@@ -36,10 +36,10 @@ class RedirectController {
 
     @DeleteMapping('/{key}')
     ResponseEntity deleteRedirect(@PathVariable String key) {
-        boolean found = redirectService.deleteRedirect(key)
-        if (!found) {
+        if (!redirectService.redirectExists(key)) {
             return ResponseEntity.status(404).body(null)
         }
+        redirectService.deleteRedirect(key)
         return ResponseEntity.status(204).body(null)
     }
 
