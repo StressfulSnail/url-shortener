@@ -30,6 +30,10 @@ class UserService {
         }
     }
 
+    boolean userExists(Long userId) {
+        return userRepository.findById(userId)
+    }
+
     Set<UserDTO> getAllUsers() {
         return userRepository.findAll().collect { userEntityToDTO(it) }
     }
@@ -52,5 +56,10 @@ class UserService {
         }
         userRepository.save(user)
         return userEntityToDTO(user)
+    }
+
+    void deleteUser(Long userId) {
+        def user = userRepository.findById(userId)
+        userRepository.delete(user.get())
     }
 }
