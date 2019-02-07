@@ -25,12 +25,13 @@ class RedirectServiceTests {
 
     @Test
     void getsRedirect() {
-        def expectedRedirect = new RedirectEntity(id: 1, key: 'KEY', redirectUrl: 'website.com')
+        def expectedRedirect = new RedirectEntity(id: 1, key: 'KEY', redirectUrl: 'website.com', userId: 2)
         given(redirectRepositoryMock.findByKey('KEY')).willReturn(expectedRedirect)
 
         RedirectDTO redirect = redirectService.getRedirect('KEY')
 
         assertThat(redirect.id).isEqualTo(1)
+        assertThat(redirect.userId).isEqualTo(2)
         assertThat(redirect.key).isEqualTo('KEY')
         assertThat(redirect.redirectUrl).isEqualTo('website.com')
     }
@@ -47,10 +48,11 @@ class RedirectServiceTests {
     @Test
     void createsRedirect() {
         def redirectUrl = 'website.com'
-        RedirectDTO redirectDTO = redirectService.createRedirect(redirectUrl)
+        RedirectDTO redirectDTO = redirectService.createRedirect(redirectUrl, 2)
 
         verify(redirectRepositoryMock).save(any())
         assertThat(redirectDTO.id).isNull()
+        assertThat(redirectDTO.userId).isEqualTo(2)
         assertThat(redirectDTO.redirectUrl).isEqualTo(redirectUrl)
         assertThat(redirectDTO.key).matches(/^temp[0-9]{4}$/)
     }

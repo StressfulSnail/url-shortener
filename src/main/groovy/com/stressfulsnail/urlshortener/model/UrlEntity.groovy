@@ -9,6 +9,8 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.Inheritance
 import javax.persistence.InheritanceType
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
 import javax.persistence.Table
 
@@ -25,4 +27,7 @@ class UrlEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = 'url')
     Set<RequestEntity> requests = []
+
+    @Column(name = 'user_id', nullable = false)
+    Long userId
 }

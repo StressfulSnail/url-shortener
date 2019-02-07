@@ -46,6 +46,11 @@ class UserService {
         return null
     }
 
+    Long getUserId(String username) {
+        def user = userRepository.findByUsername(username)
+        return user?.id
+    }
+
     UserDTO createUser(UserDTO createUserDTO) {
         Set<RoleEntity> roles = createUserDTO.roles.collect { roleRepository.findByRole(it) } // fix this - what happens when role not found?
         def user = new UserEntity().with {

@@ -2,6 +2,8 @@ package com.stressfulsnail.urlshortener.controller
 
 import com.stressfulsnail.urlshortener.dto.RedirectDTO
 import com.stressfulsnail.urlshortener.service.RedirectService
+import com.stressfulsnail.urlshortener.service.UserService
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner)
 @WebMvcTest(value = RedirectController)
-@WithMockUser(authorities = [ 'USER' ])
+@WithMockUser(username = 'jeff_user', authorities = [ 'USER' ])
 class RedirectControllerTests {
 
     @Autowired
@@ -28,9 +30,18 @@ class RedirectControllerTests {
     @MockBean
     RedirectService redirectServiceMock
 
+    @MockBean
+    UserService userService
+
+    @Before
+    void setupUser() {
+        when(userService.getUserId('jeff_user')).thenReturn(new Long(2))
+        when(userService.getUserId('not_jeff_user')).thenReturn(new Long(500))
+    }
+
     @Test
     void getValidRedirect() {
-        def mockRedirect = new RedirectDTO(id: 1, key: 'KEY', redirectUrl: 'website.com')
+        def mockRedirect = new RedirectDTO(id: 1, userId: 2, key: 'KEY', redirectUrl: 'website.com')
         when(redirectServiceMock.getRedirect('KEY')).thenReturn(mockRedirect)
 
         mockMvc.perform(get('/api/redirect/KEY'))
@@ -46,9 +57,19 @@ class RedirectControllerTests {
     }
 
     @Test
+    @WithMockUser(username = 'not_jeff_user', authorities = [ 'USER' ])
+    void getWhatIsNotMine() {
+        def mockRedirect = new RedirectDTO(id: 1, userId: 2, key: 'KEY', redirectUrl: 'website.com')
+        when(redirectServiceMock.getRedirect('KEY')).thenReturn(mockRedirect)
+
+        mockMvc.perform(get('/api/redirect/KEY'))
+            .andExpect(status().isForbidden())
+    }
+
+    @Test
     void createValidRedirect() {
-        def mockReturn = new RedirectDTO(id: 1, key: 'RAND', redirectUrl: 'url.com')
-        when(redirectServiceMock.createRedirect('url.com')).thenReturn(mockReturn)
+        def mockReturn = new RedirectDTO(id: 1, userId: 2, key: 'RAND', redirectUrl: 'url.com')
+        when(redirectServiceMock.createRedirect('url.com', 2)).thenReturn(mockReturn)
 
         mockMvc.perform(
             post('/api/redirect')
@@ -60,8 +81,8 @@ class RedirectControllerTests {
 
     @Test
     void createInvalidRedirect() {
-        def mockReturn = new RedirectDTO(id: 1, key: 'RAND', redirectUrl: 'url.com')
-        when(redirectServiceMock.createRedirect('url.com')).thenReturn(mockReturn)
+        def mockReturn = new RedirectDTO(id: 1, userId: 2, key: 'RAND', redirectUrl: 'url.com')
+        when(redirectServiceMock.createRedirect('url.com', 2)).thenReturn(mockReturn)
 
         mockMvc.perform(
             post('/api/redirect')
@@ -73,7 +94,8 @@ class RedirectControllerTests {
 
     @Test
     void deleteValidRedirect() {
-        when(redirectServiceMock.redirectExists('KEY')).thenReturn(true)
+        def mockReturn = new RedirectDTO(id: 1, userId: 2, key: 'KEY', redirectUrl: 'url.com')
+        when(redirectServiceMock.getRedirect('KEY')).thenReturn(mockReturn)
 
         mockMvc.perform(delete('/api/redirect/KEY'))
             .andExpect(status().is2xxSuccessful())
@@ -81,10 +103,20 @@ class RedirectControllerTests {
 
     @Test
     void deleteInvalidRedirect() {
-        when(redirectServiceMock.redirectExists('BAD_KEY')).thenReturn(false)
+        when(redirectServiceMock.getRedirect('BAD_KEY')).thenReturn(null)
 
         mockMvc.perform(delete('/api/redirect/BAD_KEY'))
             .andExpect(status().isNotFound())
+    }
+
+    @Test
+    @WithMockUser(username = 'not_jeff_user', authorities = [ 'USER' ])
+    void deleteWhatIsNotMine() {
+        def mockReturn = new RedirectDTO(id: 1, userId: 2, key: 'KEY', redirectUrl: 'url.com')
+        when(redirectServiceMock.getRedirect('KEY')).thenReturn(mockReturn)
+
+        mockMvc.perform(delete('/api/redirect/KEY'))
+            .andExpect(status().isForbidden())
     }
 
     @Test

@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface RedirectRepository extends JpaRepository<RedirectEntity, Long> {
     RedirectEntity findByKey(String key)
+    Set<RedirectEntity> findAllByUserId(Long userId)
 }
