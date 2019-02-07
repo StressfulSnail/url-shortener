@@ -3,6 +3,8 @@ package com.stressfulsnail.urlshortener.config
 import com.stressfulsnail.urlshortener.model.UserEntity
 import com.stressfulsnail.urlshortener.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -21,7 +23,7 @@ class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("${username} not found!")
         }
 
-        Set<String> roles = user.roles.collect { it.role }
-        return new UserDetailsImpl(user.username, user.password, roles)
+        Set<GrantedAuthority> roles = user.roles.collect { new GrantedAuthorityImpl(it.role) }
+        return new User(user.username, user.password, roles)
     }
 }
