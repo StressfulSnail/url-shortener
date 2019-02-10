@@ -2,7 +2,8 @@ package com.stressfulsnail.urlshortener.dto
 
 class RequestDTO {
     Long id
-    String ipAddress
+    String referer
     String userAgent
     Date time
+    UrlDTO url
 }

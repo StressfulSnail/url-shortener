@@ -19,11 +19,11 @@ class RequestEntity {
     @Column(name = 'request_id')
     Long id
 
-    @Column(name = 'ip_address')
-    String ipAddress
-
     @Column(name = 'user_agent')
     String userAgent
+
+    @Column(name = 'referer')
+    String referer
 
     @Column
     @Temporal(TemporalType.TIMESTAMP)
